@@ -14,7 +14,7 @@
                     "interactions": ""
                 },
                 {
-                    "name": "Jump",
+                    "name": "Drop",
                     "type": "Button",
                     "id": "3a5f0793-040f-4521-bfae-20c05a043a2f",
                     "expectedControlType": "Button",
@@ -85,7 +85,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Jump",
+                    "action": "Drop",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

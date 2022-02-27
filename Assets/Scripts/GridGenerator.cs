@@ -7,8 +7,8 @@ public class GridGenerator : MonoBehaviour
     private static GridGenerator instance;
     public static GridGenerator Instance { get { return instance; } }
     private System.Random rand = new System.Random();
-  
-   
+
+
     public int numberOfRows;
     public int numberOfColumns;
     [SerializeField]
@@ -19,7 +19,7 @@ public class GridGenerator : MonoBehaviour
     private GameObject CratePrefab;
 
     public GameObject[,] grid = new GameObject[32, 32];
-    public List<Vector2>    emptyTileList = new List<Vector2>();
+    public List<Vector2> emptyTileList = new List<Vector2>();
 
 
     public float tileSize;
@@ -46,7 +46,7 @@ public class GridGenerator : MonoBehaviour
     }
     void Start()
     {
-      
+
     }
 
     // Update is called once per frame
@@ -54,7 +54,7 @@ public class GridGenerator : MonoBehaviour
     {
         if (numberOfCrates < MaxNumberOfCrates)
         {
-            timer+=Time.deltaTime;
+            timer += Time.deltaTime;
             if (timer >= maxTimer)
             {
                 PlaceCrateOnTiles();
@@ -62,9 +62,9 @@ public class GridGenerator : MonoBehaviour
             }
         }
     }
-    
+
     private void generateGrid()
-	{
+    {
         Vector3 pos = Vector3.zero;
         for (int r = 0; r < numberOfRows; r++)
         {
@@ -80,23 +80,22 @@ public class GridGenerator : MonoBehaviour
         }
 
         emptyTileList.Remove(new Vector2(numberOfRows / 2, numberOfColumns / 2));
-		for (int i = 0; i < MaxNumOfBombs; i++)
-		{
-            int indx = rand.Next(0, emptyTileList.Count-1);
+        for (int i = 0; i < MaxNumOfBombs; i++)
+        {
+            int indx = rand.Next(0, emptyTileList.Count - 1);
             grid[(int)emptyTileList[indx].x, (int)emptyTileList[indx].y].GetComponent<Tile>().ActivateBomb(true);
             emptyTileList.RemoveAt(indx);
 
 
-		}
+        }
     }
     public void PlaceCrateOnTiles()
-	{
-        int indx = rand.Next(0, emptyTileList.Count-1);
-        
+    {
+        int indx = rand.Next(0, emptyTileList.Count - 1);
+
         grid[(int)emptyTileList[indx].x, (int)emptyTileList[indx].y].GetComponent<Tile>().ActivateCrate(true);
         numberOfCrates++;
         emptyTileList.RemoveAt(indx);
     }
 
-  
 }

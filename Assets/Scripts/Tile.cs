@@ -31,6 +31,7 @@ public class Tile : MonoBehaviour
 		{
 			ChangeTileColor(true);
 			IsOccupied = true;
+			collision.gameObject.GetComponent<PlayerMovement>().TileCoordinates = coordinates;
 			int i = GridGenerator.Instance.emptyTileList.IndexOf(coordinates);
 			if(i!=-1)
 			GridGenerator.Instance.emptyTileList.RemoveAt(i);

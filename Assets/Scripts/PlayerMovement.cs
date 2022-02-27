@@ -12,6 +12,7 @@ public class PlayerMovement : MonoBehaviour
     private float JumpForce = 5;
     [SerializeField]
     private float rotationSpeed = 5;
+    public Vector2 TileCoordinates;
     public LayerMask ObstacleLayerMask;
     public bool isJumping;
     public bool isMoving;
@@ -20,7 +21,7 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody rigidbody;
     private Animator PlayerAnimator;
     public GameObject followTarget;
-
+    public GameObject Bomb;
     Vector2 inputVector = Vector2.zero;
     Vector3 MoveDirection = Vector3.zero;
     public Vector2 lookInput = Vector2.zero;
@@ -121,20 +122,38 @@ public class PlayerMovement : MonoBehaviour
         
     }
 
-    public void OnJump(InputValue value)
+    public void OnDrop(InputValue value)
     {
-        if (isJumping)
-        {
-            return;
+
+
+        bool isDropping = value.isPressed;
+        if(isDropping && GridGenerator.Instance.NumOfBombs>0)
+		{
+            Vector3 tilePos = GridGenerator.Instance.grid[(int)TileCoordinates.x, (int)TileCoordinates.y].transform.position;
+            GameObject tmp = Instantiate(Bomb,new Vector3  (tilePos.x,tilePos.y+0.5f,tilePos.z ),Quaternion.identity);
+            GridGenerator.Instance.NumOfBombs--;
+
+            StartCoroutine(RemoveCratesOnBombDrop());
         }
-        isJumping = value.isPressed;
-        rigidbody.AddForce((transform.up + transform.forward) * JumpForce, ForceMode.Impulse);
-      
 
     }
-  
 
-    private void OnCollisionEnter(Collision collision)
+    public IEnumerator RemoveCratesOnBombDrop()
+    {
+        yield return new WaitForSeconds(1.0f);
+        int r = (int)TileCoordinates.x;
+        int c = (int)TileCoordinates.y;
+        for (int i = r - 1; i < r + 2; i++)
+        {
+            for (int j = c - 1; j < c + 2; j++)
+            {
+                if((i>=0 && i<GridGenerator.Instance.numberOfRows) && (j >= 0 && j < GridGenerator.Instance.numberOfColumns) )
+                GridGenerator.Instance.grid[i, j].GetComponent<Tile>().ActivateCrate(false);
+
+            }
+        }
+    }
+        private void OnCollisionEnter(Collision collision)
     {
         if (!collision.gameObject.CompareTag("Ground") && !isJumping) return;
 
