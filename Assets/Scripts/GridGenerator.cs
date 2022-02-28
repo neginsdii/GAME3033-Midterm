@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using TMPro;
 public class GridGenerator : MonoBehaviour
 {
     private static GridGenerator instance;
@@ -17,10 +17,11 @@ public class GridGenerator : MonoBehaviour
     private GameObject tilePrefab;
     [SerializeField]
     private GameObject CratePrefab;
-
+    [SerializeField]
+    private GameObject exitPrefab;
     public GameObject[,] grid = new GameObject[32, 32];
     public List<Vector2> emptyTileList = new List<Vector2>();
-
+    public TextMeshProUGUI bombText;
 
     public float tileSize;
     private float numberOfCrates;
@@ -61,6 +62,8 @@ public class GridGenerator : MonoBehaviour
                 timer = 0;
             }
         }
+
+        bombText.SetText(NumOfBombs.ToString());
     }
 
     private void generateGrid()
@@ -80,6 +83,12 @@ public class GridGenerator : MonoBehaviour
         }
 
         emptyTileList.Remove(new Vector2(numberOfRows / 2, numberOfColumns / 2));
+
+        GameObject LastTilePos = grid[numberOfRows - 1, numberOfColumns - 1];
+        GameObject tmp = Instantiate(exitPrefab, new Vector3(LastTilePos.transform.position.x, LastTilePos.transform.position.y + 0.5f, LastTilePos.transform.position.z), Quaternion.identity);
+        emptyTileList.Remove(new Vector2(numberOfRows -1, numberOfColumns-1));
+        LastTilePos.GetComponent<Tile>().IsOccupied = true;
+
         for (int i = 0; i < MaxNumOfBombs; i++)
         {
             int indx = rand.Next(0, emptyTileList.Count - 1);
@@ -88,10 +97,11 @@ public class GridGenerator : MonoBehaviour
 
 
         }
+       
     }
     public void PlaceCrateOnTiles()
     {
-        int indx = rand.Next(0, emptyTileList.Count - 1);
+        int indx = rand.Next(1, emptyTileList.Count - 1);
 
         grid[(int)emptyTileList[indx].x, (int)emptyTileList[indx].y].GetComponent<Tile>().ActivateCrate(true);
         numberOfCrates++;

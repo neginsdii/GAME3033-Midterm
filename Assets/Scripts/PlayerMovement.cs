@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField]
@@ -21,6 +22,7 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody rigidbody;
     private Animator PlayerAnimator;
     public GameObject followTarget;
+    public AudioSource audioSource;
     public GameObject Bomb;
     Vector2 inputVector = Vector2.zero;
     Vector3 MoveDirection = Vector3.zero;
@@ -39,11 +41,12 @@ public class PlayerMovement : MonoBehaviour
       
         rigidbody = GetComponent<Rigidbody>();
         PlayerAnimator = GetComponent<Animator>();
+        audioSource = GetComponent<AudioSource>();
     }
     void Start()
     {
-        int r = GridGenerator.Instance.numberOfRows / 2;
-        int c = GridGenerator.Instance.numberOfColumns / 2;
+        int r = 0;// GridGenerator.Instance.numberOfRows / 2;
+        int c = 0;// GridGenerator.Instance.numberOfColumns / 2;
         transform.position = new Vector3(GridGenerator.Instance.grid[r,c].transform.position.x, 3, GridGenerator.Instance.grid[r, c].transform.position.z);
     }
 
@@ -165,12 +168,23 @@ public class PlayerMovement : MonoBehaviour
 	{
 		if (other.gameObject.CompareTag("Bomb"))
 		{
+            if(!audioSource.isPlaying)
+            audioSource.Play();
             GridGenerator.Instance.NumOfBombs++;
             Tile tmp = other.gameObject.GetComponentInParent<Tile>();
             tmp.ActivateBomb(false);
             int i = GridGenerator.Instance.emptyTileList.IndexOf(tmp.coordinates);
             if(i!=-1)
             GridGenerator.Instance.emptyTileList.RemoveAt(i);
+
+        }
+        else if(other.gameObject.CompareTag("Exit"))
+		{
+            SceneManager.LoadScene("EndScene");
+		}
+		else if (other.gameObject.CompareTag("DeathPlane"))
+		{
+            SceneManager.LoadScene("GameOver");
 
         }
     }
